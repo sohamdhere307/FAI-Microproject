@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HomeGuard AI – Smart Home Automation and Security Assistant</title>
+<style>
+:root{--bg:#eef2f6;--card:#fff;--ink:#14213d;--mute:#5b6b82;--line:#d3dce8;--acc:#0f766e;--accfg:#fff;--hi:#fde68a;--bad:#b91c1c;--warn:#b45309;--ok:#0f766e}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1726;--card:#16223a;--ink:#e6edf7;--mute:#9db0c9;--line:#2a3a58;--acc:#2dd4bf;--accfg:#06201d;--hi:#4a3d0d;--bad:#f87171;--warn:#fbbf24;--ok:#2dd4bf}}
+:root[data-theme=dark]{--bg:#0e1726;--card:#16223a;--ink:#e6edf7;--mute:#9db0c9;--line:#2a3a58;--acc:#2dd4bf;--accfg:#06201d;--hi:#4a3d0d;--bad:#f87171;--warn:#fbbf24;--ok:#2dd4bf}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+h1,h2,h3{font-family:Georgia,"Iowan Old Style",serif;line-height:1.15;margin:0 0 .5em}
+h1{font-size:clamp(2.2rem,6vw,4rem);max-width:15ch}
+h2{font-size:1.9rem}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.nav{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
+header.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+.logo{font-family:Georgia,serif;font-weight:700;font-size:1.2rem;text-decoration:none}
+.logo span{color:var(--acc)}
+nav{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+nav a{text-decoration:none;color:var(--mute);font-size:.95rem}
+nav a:hover{color:var(--ink)}
+button,.btn{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;text-decoration:none;display:inline-block}
+.btn.primary,button.primary{background:var(--acc);color:var(--accfg);border-color:var(--acc);font-weight:600}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.hero{padding:56px 0 40px;display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:center}
+.hero p{max-width:55ch;color:var(--mute);font-size:1.1rem}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.status{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.status h3{font-size:1.05rem;margin-bottom:12px}
+.status dl{display:grid;grid-template-columns:1fr auto;gap:8px 12px;margin:0}
+.status dt{color:var(--mute)}
+.status dd{margin:0;font-weight:700;text-align:right}
+.t-low{color:var(--ok)}.t-medium{color:var(--warn)}.t-high{color:var(--bad)}
+section{padding:40px 0}
+.sub{color:var(--mute);max-width:60ch;margin-top:-.2em}
+.sim{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:flex;flex-direction:column;font-size:.9rem;color:var(--mute);gap:4px}
+select{font:inherit;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.scen{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.scen button{font-size:.85rem;padding:6px 10px}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+#out{min-height:200px}
+#out .empty{color:var(--mute)}
+#out h3{font-size:1.05rem;margin:14px 0 6px}
+#out ol,#out ul{margin:0;padding-left:20px}
+#out li{margin:4px 0}
+.tag{display:inline-block;font-size:.75rem;border-radius:6px;padding:1px 7px;border:1px solid var(--line);margin-right:6px}
+.tag.e{border-color:var(--bad);color:var(--bad)}
+.sup{text-decoration:line-through;color:var(--mute)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--acc);color:var(--accfg);font-weight:700;margin-bottom:8px}
+.step h3{font-size:1.05rem}
+.step p{margin:0;color:var(--mute);font-size:.92rem}
+.tw{overflow-x:auto;margin-top:16px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);font-size:.92rem;vertical-align:top}
+tr.fired td{background:var(--hi)}
+footer{border-top:1px solid var(--line);padding:32px 0 48px;color:var(--mute);font-size:.92rem}
+footer dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 18px;margin:12px 0}
+footer dt{font-weight:600;color:var(--ink)}footer dd{margin:0}
+@media(max-width:760px){.hero,.sim{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body id="top">
+<header class="nav"><div class="wrap">
+<a class="logo" href="#top">Home<span>Guard</span>AI</a>
+<nav><a href="#simulator">Simulator</a><a href="#how">How it works</a><a href="#rules">Rule base</a><button id="theme" type="button" aria-label="Toggle theme">Theme</button></nav>
+</div></header>
+
+<main class="wrap">
+<div class="hero">
+<div>
+<p style="margin:0 0 8px;color:var(--acc);font-weight:600">Rule-based expert system</p>
+<h1>A home that reasons before it reacts.</h1>
+<p>HomeGuard AI uses forward chaining over 22 IF–THEN rules to read your home’s sensors, work out the situation, and decide which security and comfort actions to take, showing every step of its thinking.</p>
+<div class="cta"><a class="btn primary" href="#simulator">Try the simulator</a><a class="btn" href="#rules">View rules</a></div>
+</div>
+<aside class="status" aria-live="polite"><h3>Live home status</h3>
+<dl><dt>Mode</dt><dd id="sMode">–</dd><dt>Threat</dt><dd id="sThreat">–</dd><dt>Rules fired</dt><dd id="sRules">0</dd><dt>Actions</dt><dd id="sActs">0</dd></dl></aside>
+</div>
+
+<section id="simulator">
+<h2>Home Simulator</h2>
+<p class="sub">Set the sensor readings, or pick a scenario, then run the inference engine.</p>
+<div class="sim">
+<div class="panel">
+<div class="scen" id="scen"></div>
+<div class="grid" id="form"></div>
+<div class="actions"><button class="primary" id="run" type="button">Run forward chaining</button><button id="reset" type="button">Reset</button></div>
+</div>
+<div class="panel" id="out" aria-live="polite"><p class="empty">Results will appear here after you run the engine.</p></div>
+</div>
+</section>
+
+<section id="how">
+<h2>How It Works</h2>
+<p class="sub">Forward chaining is data-driven: start from known facts and keep firing rules until nothing new can be concluded.</p>
+<div class="steps">
+<div class="step"><h3>Read sensors</h3><p>Each reading becomes a fact such as door=open or time=night.</p></div>
+<div class="step"><h3>Match rules</h3><p>A rule fires when all its premises are present in the fact set.</p></div>
+<div class="step"><h3>Chain conclusions</h3><p>New facts, like mode=sleep, can trigger further rules such as intruder detection.</p></div>
+<div class="step"><h3>Resolve and act</h3><p>Emergency actions override routine ones, then the final actions are listed.</p></div>
+</div>
+</section>
+
+<section id="rules">
+<h2>Knowledge Base</h2>
+<p class="sub">All 22 rules. Rules that fired in the last run are highlighted.</p>
+<div class="tw"><table><thead><tr><th>ID</th><th>IF (premises)</th><th>THEN (conclusion)</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+</main>
+
+<footer><div class="wrap">
+<h3>Project: Smart Home Automation and Security Assistant using Forward Chaining</h3>
+<dl>
+<dt>Student name</dt><dd>Soham Kashinath Dhere</dd>
+<dt>Roll No / PRN</dt><dd>Roll No: 2048 | PRN: 1025091050</dd>
+<dt>Department &amp; subject</dt><dd>AI &amp; DS | Foundation of Artificial Intelligence (2ADPC204)</dd>
+<dt>Institution &amp; academic year</dt><dd>Annasaheb Dange College of Engineering and Technology, Ashta | 2026–2027</dd>
+</dl>
+<p>Educational prototype with simulated sensor inputs. Not a certified safety or alarm system.</p>
+</div></footer>
+
+<script>
+const SENSORS={
+ time:["day","evening","night"],
+ occupancy:["home","away"],
+ door:["closed","open"],
+ window:["closed","open"],
+ motion:["no","yes"],
+ smoke:["no","yes"],
+ gas:["no","yes"],
+ temp:["comfortable","hot","cold"],
+ light:["off","on"]
+};
+const DEFAULT={time:"day",occupancy:"home",door:"closed",window:"closed",motion:"no",smoke:"no",gas:"no",temp:"comfortable",light:"off"};
+const SCEN={
+ "Normal day":{},
+ "Night at home":{time:"night",door:"closed"},
+ "Break-in while away":{occupancy:"away",door:"open",motion:"yes",time:"night"},
+ "Fire":{smoke:"yes",temp:"hot"},
+ "Gas leak":{gas:"yes",time:"evening"},
+ "Left lights on":{occupancy:"away",light:"on"}
+};
+// emergency=true rules are never suppressed; routine rules are suppressed when threat=high
+const RULES=[
+ {id:"R1",if:["time=night","occupancy=home"],then:["mode=sleep"]},
+ {id:"R2",if:["occupancy=away"],then:["mode=away"]},
+ {id:"R3",if:["time=day","occupancy=home"],then:["mode=day"]},
+ {id:"R4",if:["time=evening","occupancy=home"],then:["mode=evening"]},
+ {id:"R5",if:["mode=away","motion=yes"],then:["intruder=suspected"]},
+ {id:"R6",if:["mode=sleep","motion=yes","door=open"],then:["intruder=suspected"]},
+ {id:"R7",if:["mode=away","window=open"],then:["intruder=suspected"]},
+ {id:"R8",if:["intruder=suspected","door=open"],then:["intruder=confirmed"]},
+ {id:"R9",if:["intruder=confirmed"],then:["threat=high"],e:1},
+ {id:"R10",if:["intruder=confirmed"],then:["do:Sound the siren"],e:1},
+ {id:"R11",if:["intruder=confirmed"],then:["do:Notify owner and emergency contact"],e:1},
+ {id:"R12",if:["intruder=suspected"],then:["do:Turn on all lights and start camera recording"],e:1},
+ {id:"R13",if:["smoke=yes"],then:["threat=high"],e:1},
+ {id:"R14",if:["smoke=yes"],then:["do:Trigger fire alarm and unlock exit doors"],e:1},
+ {id:"R15",if:["gas=yes"],then:["threat=high"],e:1},
+ {id:"R16",if:["gas=yes"],then:["do:Close gas valve and start ventilation"],e:1},
+ {id:"R17",if:["mode=away","door=closed","window=closed"],then:["do:Lock doors and arm all sensors"]},
+ {id:"R18",if:["mode=sleep","door=closed"],then:["do:Lock doors and dim lights"]},
+ {id:"R19",if:["mode=evening","light=off"],then:["do:Turn on living room lights"]},
+ {id:"R20",if:["temp=hot","occupancy=home"],then:["do:Turn on air conditioner"]},
+ {id:"R21",if:["temp=cold","occupancy=home"],then:["do:Turn on heater"]},
+ {id:"R22",if:["mode=away","light=on"],then:["do:Switch off lights to save energy"]}
+];
+const $=id=>document.getElementById(id);
+const pretty=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+// build form
+const form=$("form");
+for(const k in SENSORS){
+ const l=document.createElement("label");l.textContent=k[0].toUpperCase()+k.slice(1);
+ const s=document.createElement("select");s.id="in_"+k;
+ SENSORS[k].forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;s.appendChild(o)});
+ l.appendChild(s);form.appendChild(l);
+}
+function setValues(v){for(const k in SENSORS)$("in_"+k).value=v[k]}
+Object.keys(SCEN).forEach(n=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.onclick=()=>{setValues({...DEFAULT,...SCEN[n]});run()};$("scen").appendChild(b)});
+// rules table
+$("rows").innerHTML=RULES.map(r=>`<tr id="row_${r.id}"><td>${r.id}${r.e?' <span class="tag e">emergency</span>':''}</td><td>${r.if.map(pretty).join(" AND ")}</td><td>${r.then.map(t=>pretty(t.replace("do:","Action: "))).join(", ")}</td></tr>`).join("");
+// engine
+function infer(input){
+ const facts=new Set(Object.entries(input).map(([k,v])=>k+"="+v));
+ const fired=[];const used=new Set();
+ let changed=true;
+ while(changed){
+  changed=false;
+  for(const r of RULES){
+   if(used.has(r.id))continue;
+   if(r.if.every(p=>facts.has(p))){
+    used.add(r.id);
+    const added=r.then.filter(t=>!facts.has(t));
+    r.then.forEach(t=>facts.add(t));
+    fired.push({rule:r,added});
+    changed=true;
+   }
+  }
+ }
+ const get=k=>{for(const f of facts)if(f.startsWith(k+"="))return f.split("=")[1]};
+ const mode=get("mode")||"unknown";
+ const threat=facts.has("threat=high")?"high":facts.has("intruder=suspected")?"medium":"low";
+ // conflict resolution
+ const actions=[];
+ fired.forEach(f=>f.rule.then.filter(t=>t.startsWith("do:")).forEach(t=>{
+  const text=t.slice(3);
+  const sup=threat==="high"&&!f.rule.e;
+  if(!actions.some(a=>a.text===text))actions.push({text,id:f.rule.id,e:!!f.rule.e,sup});
+ }));
+ return{fired,mode,threat,actions};
+}
+function run(){
+ const input={};for(const k in SENSORS)input[k]=$("in_"+k).value;
+ const res=infer(input);
+ const final=res.actions.filter(a=>!a.sup);
+ $("sMode").textContent=res.mode;
+ const t=$("sThreat");t.textContent=res.threat;t.className="t-"+res.threat;
+ $("sRules").textContent=res.fired.length;
+ $("sActs").textContent=final.length;
+ document.querySelectorAll("#rows tr").forEach(tr=>tr.classList.remove("fired"));
+ res.fired.forEach(f=>$("row_"+f.rule.id).classList.add("fired"));
+ $("out").innerHTML=
+  `<h3>Reasoning trace</h3><ol>${res.fired.map(f=>`<li><b>${f.rule.id}</b>: IF ${f.rule.if.map(pretty).join(" AND ")} → ${f.rule.then.map(t=>pretty(t.replace("do:","action: "))).join(", ")}</li>`).join("")||"<li>No rules fired.</li>"}</ol>`+
+  `<h3>Final actions</h3><ul>${final.map(a=>`<li>${a.e?'<span class="tag e">emergency</span>':''}${pretty(a.text)} <span style="color:var(--mute)">(${a.id})</span></li>`).join("")||"<li>No action needed.</li>"}</ul>`+
+  (res.actions.some(a=>a.sup)?`<h3>Overridden by emergency</h3><ul>${res.actions.filter(a=>a.sup).map(a=>`<li class="sup">${pretty(a.text)} (${a.id})</li>`).join("")}</ul>`:"");
+}
+$("run").onclick=run;
+$("reset").onclick=()=>{setValues(DEFAULT);$("sMode").textContent="–";$("sThreat").textContent="–";$("sThreat").className="";$("sRules").textContent="0";$("sActs").textContent="0";document.querySelectorAll("#rows tr").forEach(tr=>tr.classList.remove("fired"));$("out").innerHTML='<p class="empty">Results will appear here after you run the engine.</p>'};
+setValues(DEFAULT);
+// theme
+$("theme").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark"};
+</script>
+</body>
+</html>
